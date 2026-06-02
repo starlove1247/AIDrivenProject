@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class CLIUI : MonoBehaviour
@@ -11,7 +12,7 @@ public class CLIUI : MonoBehaviour
     [SerializeField] TMP_InputField inputField;
     [SerializeField] TextMeshProUGUI outputText;
     [SerializeField] ScrollRect scrollRect;
-    [SerializeField] KeyCode toggleKey = KeyCode.BackQuote;
+    [SerializeField] Key toggleKey = Key.Backquote;
 
     readonly List<string> _lines = new();
     const int MaxLines = 200;
@@ -35,7 +36,7 @@ public class CLIUI : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(toggleKey))
+        if (Keyboard.current != null && Keyboard.current[toggleKey].wasPressedThisFrame)
             TogglePanel();
     }
 

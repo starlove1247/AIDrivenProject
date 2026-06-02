@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class InventoryUI : MonoBehaviour
@@ -15,7 +16,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] Button discardButton;
 
     [Header("Toggle")]
-    [SerializeField] KeyCode toggleKey = KeyCode.I;
+    [SerializeField] Key toggleKey = Key.I;
     [SerializeField] GameObject panel;
 
     Item _selectedItem;
@@ -31,7 +32,7 @@ public class InventoryUI : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(toggleKey))
+        if (Keyboard.current != null && Keyboard.current[toggleKey].wasPressedThisFrame)
             panel.SetActive(!panel.activeSelf);
     }
 
