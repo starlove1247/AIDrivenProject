@@ -388,7 +388,6 @@ GameObject:
   - component: {fileID: 224533218}
   - component: {fileID: 224533221}
   - component: {fileID: 224533220}
-  - component: {fileID: 224533219}
   m_Layer: 0
   m_Name: CLIPanel
   m_TagString: Untagged
@@ -423,7 +422,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 224533217}
+  m_GameObject: {fileID: 1588770296}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 337f63d95c22aca4fb6d5cf95f39826b, type: 3}
@@ -2577,6 +2576,8 @@ GameObject:
   - component: {fileID: 1588770299}
   - component: {fileID: 1588770298}
   - component: {fileID: 1588770297}
+  - component: {fileID: 224533219}
+  - component: {fileID: 1874752671}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -2996,7 +2997,6 @@ GameObject:
   - component: {fileID: 1874752670}
   - component: {fileID: 1874752673}
   - component: {fileID: 1874752672}
-  - component: {fileID: 1874752671}
   m_Layer: 0
   m_Name: InventoryPanel
   m_TagString: Untagged
@@ -3032,7 +3032,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1874752669}
+  m_GameObject: {fileID: 1588770296}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ad813f0027f08440bb9d18765fc9287, type: 3}
