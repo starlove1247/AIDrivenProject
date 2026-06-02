@@ -6,6 +6,9 @@ public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader Instance { get; private set; }
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatic() => Instance = null;
+
     void Awake()
     {
         if (Instance != null) { Destroy(gameObject); return; }

@@ -6,6 +6,9 @@ public class ItemRegistry : MonoBehaviour
 
     [SerializeField] Item[] allItems;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatic() => Instance = null;
+
     void Awake()
     {
         if (Instance != null) { Destroy(gameObject); return; }

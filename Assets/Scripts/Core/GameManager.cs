@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour
 
     public bool IsPaused { get; private set; }
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatic() => Instance = null;
+
     void Awake()
     {
         if (Instance != null) { Destroy(gameObject); return; }

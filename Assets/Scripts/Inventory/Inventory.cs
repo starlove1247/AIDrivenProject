@@ -9,6 +9,9 @@ public class Inventory : MonoBehaviour
 
     public System.Action OnInventoryChanged;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatic() => Instance = null;
+
     void Awake()
     {
         if (Instance != null) { Destroy(gameObject); return; }

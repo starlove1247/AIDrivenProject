@@ -9,6 +9,9 @@ public class PauseMenuUI : MonoBehaviour
     [SerializeField] Button resumeButton;
     [SerializeField] Button titleButton;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatic() => Instance = null;
+
     void Awake()
     {
         Instance = this;

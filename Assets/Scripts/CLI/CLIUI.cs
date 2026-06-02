@@ -16,6 +16,9 @@ public class CLIUI : MonoBehaviour
     readonly List<string> _lines = new();
     const int MaxLines = 200;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatic() => Instance = null;
+
     void Awake()
     {
         if (Instance != null) { Destroy(gameObject); return; }
