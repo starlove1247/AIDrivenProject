@@ -433,7 +433,7 @@ MonoBehaviour:
   inputField: {fileID: 1591209074}
   outputText: {fileID: 1886475681}
   scrollRect: {fileID: 2001040445}
-  toggleKey: 275
+  toggleKey: 4
 --- !u!114 &224533220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3044,7 +3044,7 @@ MonoBehaviour:
   detailName: {fileID: 133547430}
   detailDescription: {fileID: 442331422}
   discardButton: {fileID: 1181036873}
-  toggleKey: 284
+  toggleKey: 23
   panel: {fileID: 1874752669}
 --- !u!114 &1874752672
 MonoBehaviour:
