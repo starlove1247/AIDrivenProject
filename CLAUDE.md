@@ -98,6 +98,44 @@ cli.RegisterCommand("mycommand", args => {
 - TitleScene 不需要 GameManager/Inventory（由 MainScene 的 GameObject 提供）
 - 如需在 TitleScene 也使用 CLI，需在 TitleScene 掛 SceneLoader / CLISystem
 
+## TMP 字體設定
+
+### 字體分配
+| 用途 | Font Asset | 來源 TTF |
+|------|-----------|---------|
+| 一般 UI（標題、按鈕、物品欄） | `NotoSans-Medium SDF` | `Assets/fonts/NotoSans-Medium.ttf` |
+| CLI 面板（輸入/輸出） | `ProggyClean SDF` | `Assets/fonts/ProggyClean.ttf` |
+
+Font Assets 位於：`Assets/TextMesh Pro/Resources/Fonts & Materials/`  
+TMP 全域預設：`TMP Settings.asset` → `m_defaultFontAsset` = NotoSans-Medium SDF
+
+### 中文字（CJK）支援說明
+> ⚠️ 專案內的 NotoSans TTF（~600KB）為 **Latin-only** 版本，不含 CJK 字形。
+> 物品名稱（鐵劍、回復藥水、神秘鑰匙）等中文文字，在 Play Mode 會顯示為方塊（□）。
+>
+> **修復方法：** 下載 [NotoSansSC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)（Simplified）或 [NotoSansTC](https://fonts.google.com/noto/specimen/Noto+Sans+TC)（Traditional，~8MB）放入 `Assets/fonts/`，
+> 建立 TMP Dynamic Font Asset 後，在 `NotoSans-Medium SDF` Inspector → Fallback Font Assets 加入該字體即可。
+
+### 新增 TMP UI 文字元件規則
+1. 非 CLI 區域 → Font Asset 選 `NotoSans-Medium SDF`
+2. CLIPanel 子節點 → Font Asset 選 `ProggyClean SDF`
+3. 禁止直接用 `t.font = target`（呼叫 `set_font` setter 會觸發 `LoadFontAsset` 嘗試讀取 Dynamic Atlas Texture，可能拋出 Texture2D destroyed 錯誤）
+4. 用 execute-dynamic-code 批次修改字體時，改用 `SerializedObject.FindProperty("m_fontAsset").objectReferenceValue` + `ApplyModifiedPropertiesWithoutUndo()`
+
+## execute-dynamic-code 已知限制
+
+### `Object` 模糊引用（CS0104）
+在 `execute-dynamic-code` 的 snippet 中，`using UnityEngine` 已由 wrapper 自動加入。
+若 snippet 也包含 `using UnityEngine`，直接寫 `Object.FindObjectsByType<T>()` 會產生：
+```
+CS0104: 'Object' 是 'UnityEngine.Object' 與 'object' 之間模糊的參考
+```
+**修正：** 使用完整限定名 `UnityEngine.Object.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None)`
+
+### `GlyphRenderMode` 命名空間
+`GlyphRenderMode` 實際在 `UnityEngine.TextCore.LowLevel`，非 `TMPro`。
+在 snippet 加入 `using UnityEngine.TextCore.LowLevel;` 避免 auto-resolve。
+
 ## uloop 常用指令
 ```bash
 uloop compile                          # 編譯並回報錯誤
