@@ -8,6 +8,15 @@ Unity 2D URP 專案，包含物品欄系統、CLI 系統、雙場景切換。
 - 渲染管線：Universal Render Pipeline (URP) 2D
 - Input System：New Input System (`InputSystem_Actions.inputactions`)
 - UI：TextMeshPro (TMPro)
+- **Enter Play Mode：已啟用 `DisableDomainReload`**（跳過 Domain Reload，加快進入 Play Mode）
+
+> **注意（新增 static 欄位時必看）：** 因 Domain Reload 停用，static 變數不會在每次進入 Play Mode 時自動歸零。
+> 所有 singleton 或含 static 狀態的類別，**必須加上**：
+> ```csharp
+> [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+> static void ResetStatic() => Instance = null; // 視情況重置所有 static 欄位
+> ```
+> 已套用的類別：SceneLoader、GameManager、Inventory、CLISystem、ItemRegistry、CLIUI、PauseMenuUI。
 
 ## 資料夾結構
 ```
