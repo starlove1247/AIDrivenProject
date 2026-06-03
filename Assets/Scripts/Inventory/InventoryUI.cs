@@ -5,6 +5,10 @@ using TMPro;
 
 public class InventoryUI : MonoBehaviour
 {
+    public static InventoryUI Instance { get; private set; }
+
+    public bool IsOpen => panel != null && panel.activeSelf;
+
     [Header("Slot List")]
     [SerializeField] Transform slotContainer;
     [SerializeField] GameObject itemSlotPrefab;
@@ -20,6 +24,8 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] GameObject panel;
 
     Item _selectedItem;
+
+    void Awake() { Instance = this; }
 
     void Start()
     {
@@ -65,8 +71,12 @@ public class InventoryUI : MonoBehaviour
         detailPanel.SetActive(false);
     }
 
+    public void Show() => panel.SetActive(true);
+    public void Hide() => panel.SetActive(false);
+
     void OnDestroy()
     {
+        if (Instance == this) Instance = null;
         if (Inventory.Instance != null)
             Inventory.Instance.OnInventoryChanged -= Refresh;
     }

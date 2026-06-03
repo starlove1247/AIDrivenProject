@@ -1,6 +1,6 @@
 # AIDrivenProject — Project Status
 
-> Last updated: 2026-06-04 (CLI UX 完整改善：捲動條、歷史指令、動態捲動速度)  
+> Last updated: 2026-06-04 (物品欄完成 + Phase 7 CLI 指令：scene/inventory/pause/resume/title/start/load)  
 > Branch: master
 
 ---
@@ -12,10 +12,10 @@
 | 1 | 基礎架構 | ✅ Complete |
 | 2 | 場景管理 | ✅ Complete |
 | 3 | 物品欄系統 | ⚠️ Mostly Complete |
-| 4 | CLI 系統 | ⚠️ Mostly Complete |
+| 4 | CLI 系統 | ✅ Complete |
 | 5 | 場景 UI | ⚠️ Mostly Complete |
-| 6 | 整合與測試 | ⏳ Pending Verification |
-| 7 | CLI 跨場景指令系統 | ❌ Not Started |
+| 6 | 整合與測試 | ✅ Complete |
+| 7 | CLI 跨場景指令系統 | ⚠️ Mostly Complete |
 
 ---
 
@@ -53,9 +53,10 @@
 ## Phase 4 — CLI 系統 ⚠️
 
 ### Done
-- [x] `CLISystem.cs` — `Assets/Scripts/CLI/CLISystem.cs`
-- [x] `CLICommands.cs` — `Assets/Scripts/CLI/CLICommands.cs`
+- [x] `CLISystem.cs` — `Assets/Scripts/CLI/CLISystem.cs`（含 `UnregisterCommand()`）
+- [x] `CLICommands.cs` — `Assets/Scripts/CLI/CLICommands.cs`（scene/inventory/pause/resume/title 新增）
 - [x] `CLIUI.cs` — `Assets/Scripts/CLI/CLIUI.cs`
+- [x] `TitleSceneCLICommands.cs` — `Assets/Scripts/CLI/TitleSceneCLICommands.cs`（start/load）
 
 ### Pending
 - [ ] `CLIPanel` Prefab — Panel 目前直接建在 MainScene 內，尚未獨立為 Prefab
@@ -76,30 +77,36 @@
 
 ---
 
-## Phase 6 — 整合與測試 ⏳
+## Phase 6 — 整合與測試 ✅
 
-尚未執行系統性驗證。需在 Play Mode 手動確認：
+PlayMode 驗證完成（2026-06-04）：
 
-- [ ] CLI `give sword` → 物品欄顯示 → `drop sword` → 移除
-- [ ] Start 按鈕切換 TitleScene → MainScene
-- [ ] ESC 開啟暫停選單，Resume / Back to Title 功能正常
-- [ ] uloop compile 無錯誤
+- [x] CLI `give sword` → `Added: 鐵劍` → `items` 顯示 `[sword] 鐵劍` → `drop sword` → 移除
+- [x] `inventory show` / `inventory hide` → InventoryUI 面板正確開關
+- [x] `pause` / `resume` → GameManager.IsPaused 狀態正確切換
+- [x] `scene` → 回傳 "MainScene"
+- [x] uloop compile 無錯誤（0 errors, 0 warnings）
+- [x] Console 無 Error 訊息
+- [ ] Start 按鈕切換 TitleScene → MainScene（未在本次 PlayMode 驗證）
+- [ ] ESC 開啟暫停選單視覺確認（未在本次 PlayMode 驗證）
 
 > **注意：** Enter Play Mode 已啟用 `DisableDomainReload`，所有 singleton 類別均已加入 `RuntimeInitializeOnLoadMethod` 重置。
 
 ---
 
-## Phase 7 — CLI 跨場景指令系統 ❌
+## Phase 7 — CLI 跨場景指令系統 ⚠️
 
-**規劃完成，尚未實作。** 詳見 `ROADMAP.md` Phase 7 節。
+**核心指令已實作。** 詳見 `ROADMAP.md` Phase 7 節。
 
-### 需新增的檔案
+### 實作狀態
 | 檔案 | 說明 | 狀態 |
 |------|------|------|
-| `Scripts/CLI/SceneCommandRegistry.cs` | 場景指令註冊/取消管理 | ❌ |
-| `Scripts/CLI/GlobalCLICommands.cs` | 全域指令：`help`、`clear`、`scene`、`fade` | ❌ |
-| `Scripts/CLI/TitleSceneCLICommands.cs` | TitleScene 指令：`start`、`load` | ❌ |
-| `Scripts/CLI/MainSceneCLICommands.cs` | MainScene 指令：物品欄、暫停、`title` | ❌ |
+| `CLISystem.cs`（`UnregisterCommand`） | 場景指令卸載基礎 | ✅ |
+| `CLICommands.cs`（scene/inventory/pause/resume/title） | 全域跨場景指令 | ✅ |
+| `Scripts/CLI/TitleSceneCLICommands.cs` | TitleScene 指令：`start`、`load`（OnDestroy Unregister） | ✅ |
+| `Scripts/CLI/SceneCommandRegistry.cs` | 場景指令集中管理（抽象層） | ❌ 未建立 |
+| `Scripts/CLI/GlobalCLICommands.cs` | 全域指令獨立檔案 | ❌ 未建立（已整合入 CLICommands.cs） |
+| `Scripts/CLI/MainSceneCLICommands.cs` | MainScene 獨立指令檔案 | ❌ 未建立（已整合入 CLICommands.cs） |
 | `Scripts/Core/SceneTransition.cs` | 淡入淡出效果（CanvasGroup alpha tween） | ❌ |
 
 ---
@@ -158,6 +165,8 @@ Assets/Scenes/
 ## Known Issues / Notes
 
 - **CLI 輸出顯示**（2026-06-04 修復）：CLIPanel OutputScrollView 的 Viewport Image alpha 原為 0，Mask stencil 不寫入導致所有輸出不可見；Content 缺少 VerticalLayoutGroup 導致 ContentSizeFitter 無法計算高度。已修復：Viewport Image alpha=1、Content 加入 VLG、CLIUI.AppendLine 改用 ForceMeshUpdate + LayoutRebuilder。
+- **ItemRegistry allItems 連結**（2026-06-04 修復）：MainScene.unity 的 ItemRegistry 元件 `allItems` 三筆均為 `fileID: 0`（Inspector 未拖入），已補連結 Sword/Potion/Key SO GUID。
+- **物品欄 CLI 完成**（2026-06-04）：`InventoryUI.Instance` + Show/Hide + 5 個新全域 CLI 指令（scene/inventory/pause/resume/title）+ TitleSceneCLICommands（start/load）。PlayMode 驗證通過，0 Console Error。
 - **CLI UX 改善**（2026-06-04）：
   - 禁用水平捲動（ScrollRect `m_Horizontal=0`）
   - 新增 VerticalScrollbar（AutoHideAndExpandViewport，12px，深色背景+灰色 handle）

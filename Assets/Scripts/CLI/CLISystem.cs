@@ -26,6 +26,8 @@ public class CLISystem : MonoBehaviour
         _commands[name.ToLower()] = handler;
     }
 
+    public void UnregisterCommand(string name) => _commands.Remove(name.ToLower());
+
     public void Execute(string input)
     {
         input = input.Trim();

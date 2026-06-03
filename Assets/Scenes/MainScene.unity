@@ -1025,9 +1025,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemRegistry
   allItems:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 98daca37102fd334d8d6e45ed7e8fa91, type: 2}
+  - {fileID: 11400000, guid: 1be6e15fbb3505c4cb965e20d4f7dab1, type: 2}
+  - {fileID: 11400000, guid: b89615aca4ac70841a65a084897940d1, type: 2}
 --- !u!4 &509093198
 Transform:
   m_ObjectHideFlags: 0

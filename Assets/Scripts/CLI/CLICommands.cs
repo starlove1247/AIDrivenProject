@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public static class CLICommands
 {
@@ -44,6 +45,45 @@ public static class CLICommands
             string id = args[0].ToLower();
             bool ok = Inventory.Instance?.RemoveItemById(id) ?? false;
             return ok ? $"Dropped item: {id}" : $"Item '{id}' not in inventory.";
+        });
+
+        cli.RegisterCommand("scene", args =>
+            SceneManager.GetActiveScene().name);
+
+        cli.RegisterCommand("inventory", args =>
+        {
+            if (InventoryUI.Instance == null) return "InventoryUI not available in this scene.";
+            if (args.Length == 0) return "Usage: inventory <show|hide>";
+            switch (args[0].ToLower())
+            {
+                case "show": InventoryUI.Instance.Show(); return "Inventory shown.";
+                case "hide": InventoryUI.Instance.Hide(); return "Inventory hidden.";
+                default: return "Usage: inventory <show|hide>";
+            }
+        });
+
+        cli.RegisterCommand("pause", args =>
+        {
+            var gm = GameManager.Instance;
+            if (gm == null) return "GameManager not available.";
+            if (!gm.IsPaused) gm.TogglePause();
+            return "Game paused.";
+        });
+
+        cli.RegisterCommand("resume", args =>
+        {
+            var gm = GameManager.Instance;
+            if (gm == null) return "GameManager not available.";
+            gm.Resume();
+            return "Game resumed.";
+        });
+
+        cli.RegisterCommand("title", args =>
+        {
+            var sl = SceneLoader.Instance;
+            if (sl == null) return "SceneLoader not available.";
+            sl.LoadScene("TitleScene");
+            return "Loading TitleScene...";
         });
     }
 }
