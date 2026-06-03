@@ -1,6 +1,6 @@
 # AIDrivenProject — Project Status
 
-> Last updated: 2026-06-04 (4 項修復：Resume 關閉 UI、load 全域化、Inventory/ItemRegistry 非跨場景、場景改用 Prefab instance)  
+> Last updated: 2026-06-04 (CLI 跨場景 Bootstrap 系統：CLIRoot.prefab + CLIBootstrap.cs，TitleScene 背景修復)  
 > Branch: master
 
 ---
@@ -15,7 +15,7 @@
 | 4 | CLI 系統 | ✅ Complete |
 | 5 | 場景 UI | ✅ Complete |
 | 6 | 整合與測試 | ✅ Complete |
-| 7 | CLI 跨場景指令系統 | ⚠️ Mostly Complete |
+| 7 | CLI 跨場景指令系統 | ✅ Complete |
 
 ---
 
@@ -90,20 +90,19 @@ PlayMode 驗證完成（2026-06-04）：
 
 ---
 
-## Phase 7 — CLI 跨場景指令系統 ⚠️
+## Phase 7 — CLI 跨場景指令系統 ✅
 
-**核心指令已實作。** 詳見 `ROADMAP.md` Phase 7 節。
+**Bootstrap 架構完成。** CLIRoot 由靜態 Bootstrap 自動建立，無論從任何場景啟動皆可用。
 
 ### 實作狀態
 | 檔案 | 說明 | 狀態 |
 |------|------|------|
 | `CLISystem.cs`（`UnregisterCommand`） | 場景指令卸載基礎 | ✅ |
 | `CLICommands.cs`（scene/inventory/pause/resume/title） | 全域跨場景指令 | ✅ |
-| `Scripts/CLI/TitleSceneCLICommands.cs` | TitleScene 指令：`start`（OnDestroy Unregister；`load` 已移至全域） | ✅ |
-| `Scripts/CLI/SceneCommandRegistry.cs` | 場景指令集中管理（抽象層） | ❌ 未建立 |
-| `Scripts/CLI/GlobalCLICommands.cs` | 全域指令獨立檔案 | ❌ 未建立（已整合入 CLICommands.cs） |
-| `Scripts/CLI/MainSceneCLICommands.cs` | MainScene 獨立指令檔案 | ❌ 未建立（已整合入 CLICommands.cs） |
-| `Scripts/Core/SceneTransition.cs` | 淡入淡出效果（CanvasGroup alpha tween） | ❌ |
+| `Scripts/CLI/CLIBootstrap.cs` | `BeforeSceneLoad` 靜態建立 CLIRoot | ✅ 新增 |
+| `Scripts/CLI/TitleSceneCLICommands.cs` | TitleScene 指令：`start`（OnDestroy Unregister） | ✅ |
+| `Resources/CLIRoot.prefab` | Canvas(100)+CLISystem+CLIUI+SceneLoader+CLIPanel | ✅ 新增 |
+| `Scripts/Core/SceneTransition.cs` | 淡入淡出效果（CanvasGroup alpha tween） | ❌ 未實作 |
 
 ---
 
@@ -126,6 +125,7 @@ Assets/Scripts/CLI/
   CLISystem.cs
   CLICommands.cs
   CLIUI.cs
+  CLIBootstrap.cs
 
 Assets/Scripts/UI/
   TitleUI.cs
@@ -141,6 +141,9 @@ Assets/Prefabs/UI/
   InventoryPanel.prefab  ✅
   CLIPanel.prefab        ✅
   PauseMenuPanel.prefab  ✅
+
+Assets/Resources/
+  CLIRoot.prefab         ✅ (Bootstrap prefab: Canvas+CLISystem+CLIUI+SceneLoader+CLIPanel)
 ```
 
 ### ScriptableObjects
@@ -179,3 +182,5 @@ Assets/Scenes/
 - **MainScene UI Prefab 替換**（2026-06-04）：MainScene Canvas 下三個 standalone UI GameObject（PauseMenuPanel、InventoryPanel、CLIPanel）已替換為 prefab instance（`PrefabUtility.InstantiatePrefab`）。序列化欄位自動連接，Resume 按鈕正常關閉暫停 UI（PlayMode 驗證通過）。
 - **Inventory / ItemRegistry 場景化**（2026-06-04）：移除 `DontDestroyOnLoad`，加入 `OnDestroy` 清除 Instance。物品欄資料不再跨場景保存（僅 MainScene 有效）。
 - **`load` 指令全域化**（2026-06-04）：從 `TitleSceneCLICommands.cs` 移至 `CLICommands.cs`，全場景可用。`TitleSceneCLICommands` 僅保留 `start`。
+- **CLI 跨場景 Bootstrap**（2026-06-04）：`CLIBootstrap.cs`（`BeforeSceneLoad`）自動建立 `CLIRoot.prefab`（Canvas sortingOrder=100 + CLISystem + CLIUI + SceneLoader + CLIPanel），存於 `Assets/Resources/`。無論從 TitleScene 或 MainScene 啟動皆可用。移除 MainScene 的 CLISystem 獨立 GO 與 Canvas 上的 CLIUI/CLIPanel。PlayMode 驗證：CLIRoot 在 DontDestroyOnLoad，`give sword` / `start` 指令正常。0 Console Errors。
+- **TitleScene 背景修復**（2026-06-04）：Canvas Background Image 顏色由黑改為深藍灰（0.25, 0.28, 0.38, 1），CLI 面板（深色）現在有足夠對比度可見。
