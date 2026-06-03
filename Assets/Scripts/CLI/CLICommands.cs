@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -9,10 +10,25 @@ public static class CLICommands
     {
         cli.RegisterCommand("help", args =>
         {
-            var sb = new StringBuilder("Commands:\n");
-            foreach (string name in cli.GetCommandNames(SceneManager.GetActiveScene().name).OrderBy(n => n))
+            string scene = SceneManager.GetActiveScene().name;
+            IEnumerable<string> names;
+            string header;
+            if (args.Length > 0)
+            {
+                string q = args[0].ToLower();
+                names = cli.FuzzySearch(q, scene);
+                header = $"Commands (matching '{q}'):\n";
+            }
+            else
+            {
+                names = cli.GetCommandNames(scene).OrderBy(n => n);
+                header = "Commands:\n";
+            }
+            var sb = new StringBuilder(header);
+            foreach (string name in names)
                 sb.AppendLine($"  {name}");
-            return sb.ToString().TrimEnd();
+            string result = sb.ToString().TrimEnd();
+            return result == header.TrimEnd() ? "No matching commands." : result;
         });
 
         cli.RegisterCommand("clear", args =>

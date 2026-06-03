@@ -1,6 +1,6 @@
 # AIDrivenProject — Project Status
 
-> Last updated: 2026-06-04 (ScreenFader 獨立為通用型 singleton GO，SceneLoader.Awake() 建立；sortingOrder=32767，含 GraphicRaycaster)  
+> Last updated: 2026-06-04 (CLI 建議選號執行：Did you mean: (1) items → 輸入 1 直接執行)  
 > Branch: master
 
 ---
@@ -186,3 +186,4 @@ Assets/Scenes/
 - **TitleScene 背景修復**（2026-06-04）：Canvas Background Image 顏色由黑改為深藍灰（0.25, 0.28, 0.38, 1），CLI 面板（深色）現在有足夠對比度可見。
 - **help 指令場景過濾**（2026-06-04）：`CLISystem.RegisterCommand` 加第三參數 `scene`（`null`=通用），`GetCommandNames(currentScene)` 依場景過濾。`help` 顯示當前場景可用指令。通用：help/clear/scene/load；MainScene 專屬：items/give/drop/inventory/pause/resume/title/itemlist。uloop compile 0 errors。
 - **場景切換淡入淡出**（2026-06-04）：新增 `ScreenFader.cs` 獨立通用型 singleton，`SceneLoader.Awake()` 建立其 GO + `DontDestroyOnLoad`。FadeOverlay Canvas sortingOrder=32767（`short.MaxValue`），含 GraphicRaycaster 攔截 UI 事件。`SceneLoader.LoadSceneWithFade()` 透過 `ScreenFader.Instance.FadeOut/FadeIn()` 執行協程。按鈕（TitleUI / PauseMenuUI）用 `LoadSceneWithFade`；CLI `title`/`load` 用 `LoadScene`（直接切換）。`fade <on|off>` 指令改存取 `ScreenFader.FadeEnabled`。uloop compile 0 errors。
+- **CLI 模糊搜尋 + 選號執行**（2026-06-04）：`CLISystem.FuzzySearch(query, scene)` 以 starts-with > contains > Levenshtein 距離排序比對。未知指令顯示編號建議（`Did you mean: (1) itemlist, (2) items`）；輸入數字直接執行對應指令（顯示 `> itemlist` 非 `> 1`）。建議清單存入 `_lastSuggestions`（instance 欄位），任何後續輸入皆清除。`help <query>` 支援模糊過濾當前場景指令清單。uloop compile 0 errors。
