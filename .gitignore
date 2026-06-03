@@ -1,6 +1,13 @@
 # uloop outputs (截圖、hierarchy dump 等暫存產物)
 .uloop/outputs/
 
+# Windows device file accidentally created
+nul
+
+# Duplicate Unity resource folders (created by concurrent mkdir)
+Assets/Resources 1/
+Assets/Resources 1.meta
+
 # Unity generated
 [Ll]ibrary/
 [Tt]emp/
