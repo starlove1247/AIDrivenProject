@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CLISystem : MonoBehaviour
 {
     public static CLISystem Instance { get; private set; }
 
-    readonly Dictionary<string, Func<string[], string>> _commands = new();
+    readonly Dictionary<string, (Func<string[], string> handler, string scene)> _commands = new();
 
     public Action<string> OnOutput;
 
@@ -21,9 +22,9 @@ public class CLISystem : MonoBehaviour
         CLICommands.Register(this);
     }
 
-    public void RegisterCommand(string name, Func<string[], string> handler)
+    public void RegisterCommand(string name, Func<string[], string> handler, string scene = null)
     {
-        _commands[name.ToLower()] = handler;
+        _commands[name.ToLower()] = (handler, scene);
     }
 
     public void UnregisterCommand(string name) => _commands.Remove(name.ToLower());
@@ -39,13 +40,17 @@ public class CLISystem : MonoBehaviour
         string cmd = parts[0].ToLower();
         string[] args = parts.Length > 1 ? parts[1..] : Array.Empty<string>();
 
-        if (_commands.TryGetValue(cmd, out var handler))
-            Output(handler(args));
+        if (_commands.TryGetValue(cmd, out var entry))
+            Output(entry.handler(args));
         else
             Output($"Unknown command: '{cmd}'. Type 'help' for list.");
     }
 
     public void Output(string message) => OnOutput?.Invoke(message);
 
-    public IEnumerable<string> GetCommandNames() => _commands.Keys;
+    public IEnumerable<string> GetCommandNames(string currentScene = null) =>
+        currentScene == null
+            ? _commands.Keys
+            : _commands.Where(kv => kv.Value.scene == null || kv.Value.scene == currentScene)
+                       .Select(kv => kv.Key);
 }

@@ -1,6 +1,6 @@
 # AIDrivenProject — Project Status
 
-> Last updated: 2026-06-04 (CLI 跨場景 Bootstrap 系統：CLIRoot.prefab + CLIBootstrap.cs，TitleScene 背景修復)  
+> Last updated: 2026-06-04 (help 指令依場景過濾：TitleScene 只顯示通用指令，MainScene 顯示全部指令)  
 > Branch: master
 
 ---
@@ -184,3 +184,4 @@ Assets/Scenes/
 - **`load` 指令全域化**（2026-06-04）：從 `TitleSceneCLICommands.cs` 移至 `CLICommands.cs`，全場景可用。`TitleSceneCLICommands` 僅保留 `start`。
 - **CLI 跨場景 Bootstrap**（2026-06-04）：`CLIBootstrap.cs`（`BeforeSceneLoad`）自動建立 `CLIRoot.prefab`（Canvas sortingOrder=100 + CLISystem + CLIUI + SceneLoader + CLIPanel），存於 `Assets/Resources/`。無論從 TitleScene 或 MainScene 啟動皆可用。移除 MainScene 的 CLISystem 獨立 GO 與 Canvas 上的 CLIUI/CLIPanel。PlayMode 驗證：CLIRoot 在 DontDestroyOnLoad，`give sword` / `start` 指令正常。0 Console Errors。
 - **TitleScene 背景修復**（2026-06-04）：Canvas Background Image 顏色由黑改為深藍灰（0.25, 0.28, 0.38, 1），CLI 面板（深色）現在有足夠對比度可見。
+- **help 指令場景過濾**（2026-06-04）：`CLISystem.RegisterCommand` 加第三參數 `scene`（`null`=通用），`GetCommandNames(currentScene)` 依場景過濾。`help` 顯示當前場景可用指令。通用：help/clear/scene/load；MainScene 專屬：items/give/drop/inventory/pause/resume/title/itemlist。uloop compile 0 errors。

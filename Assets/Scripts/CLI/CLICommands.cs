@@ -10,7 +10,7 @@ public static class CLICommands
         cli.RegisterCommand("help", args =>
         {
             var sb = new StringBuilder("Commands:\n");
-            foreach (string name in cli.GetCommandNames().OrderBy(n => n))
+            foreach (string name in cli.GetCommandNames(SceneManager.GetActiveScene().name).OrderBy(n => n))
                 sb.AppendLine($"  {name}");
             return sb.ToString().TrimEnd();
         });
@@ -27,7 +27,7 @@ public static class CLICommands
             if (inv == null) return "Inventory not found.";
             if (inv.Items.Count == 0) return "Inventory is empty.";
             return string.Join("\n", inv.Items.Select(i => $"  [{i.itemId}] {i.itemName}"));
-        });
+        }, "MainScene");
 
         cli.RegisterCommand("give", args =>
         {
@@ -37,7 +37,7 @@ public static class CLICommands
             if (item == null) return $"Item '{id}' not found in registry.";
             Inventory.Instance?.AddItem(item);
             return $"Added: {item.itemName}";
-        });
+        }, "MainScene");
 
         cli.RegisterCommand("drop", args =>
         {
@@ -45,7 +45,7 @@ public static class CLICommands
             string id = args[0].ToLower();
             bool ok = Inventory.Instance?.RemoveItemById(id) ?? false;
             return ok ? $"Dropped item: {id}" : $"Item '{id}' not in inventory.";
-        });
+        }, "MainScene");
 
         cli.RegisterCommand("scene", args =>
             SceneManager.GetActiveScene().name);
@@ -60,7 +60,7 @@ public static class CLICommands
                 case "hide": InventoryUI.Instance.Hide(); return "Inventory hidden.";
                 default: return "Usage: inventory <show|hide>";
             }
-        });
+        }, "MainScene");
 
         cli.RegisterCommand("pause", args =>
         {
@@ -68,7 +68,7 @@ public static class CLICommands
             if (gm == null) return "GameManager not available.";
             if (!gm.IsPaused) gm.TogglePause();
             return "Game paused.";
-        });
+        }, "MainScene");
 
         cli.RegisterCommand("resume", args =>
         {
@@ -76,7 +76,7 @@ public static class CLICommands
             if (gm == null) return "GameManager not available.";
             gm.Resume();
             return "Game resumed.";
-        });
+        }, "MainScene");
 
         cli.RegisterCommand("title", args =>
         {
@@ -84,7 +84,7 @@ public static class CLICommands
             if (sl == null) return "SceneLoader not available.";
             sl.LoadScene("TitleScene");
             return "Loading TitleScene...";
-        });
+        }, "MainScene");
 
         cli.RegisterCommand("itemlist", args =>
         {
@@ -95,7 +95,7 @@ public static class CLICommands
             foreach (var item in items)
                 sb.AppendLine($"  [{item.itemId}] {item.itemName} - {item.description}");
             return sb.ToString().TrimEnd();
-        });
+        }, "MainScene");
 
         cli.RegisterCommand("load", args =>
         {
