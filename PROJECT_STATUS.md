@@ -1,6 +1,6 @@
 # AIDrivenProject — Project Status
 
-> Last updated: 2026-06-04 (建立 InventoryPanel / CLIPanel / PauseMenuPanel Prefab)  
+> Last updated: 2026-06-04 (4 項修復：Resume 關閉 UI、load 全域化、Inventory/ItemRegistry 非跨場景、場景改用 Prefab instance)  
 > Branch: master
 
 ---
@@ -54,7 +54,7 @@
 - [x] `CLISystem.cs` — `Assets/Scripts/CLI/CLISystem.cs`（含 `UnregisterCommand()`）
 - [x] `CLICommands.cs` — `Assets/Scripts/CLI/CLICommands.cs`（scene/inventory/pause/resume/title 新增）
 - [x] `CLIUI.cs` — `Assets/Scripts/CLI/CLIUI.cs`
-- [x] `TitleSceneCLICommands.cs` — `Assets/Scripts/CLI/TitleSceneCLICommands.cs`（start/load）
+- [x] `TitleSceneCLICommands.cs` — `Assets/Scripts/CLI/TitleSceneCLICommands.cs`（start；load 已移至全域）
 
 - [x] `CLIPanel.prefab` — `Assets/Prefabs/UI/CLIPanel.prefab`
 
@@ -99,7 +99,7 @@ PlayMode 驗證完成（2026-06-04）：
 |------|------|------|
 | `CLISystem.cs`（`UnregisterCommand`） | 場景指令卸載基礎 | ✅ |
 | `CLICommands.cs`（scene/inventory/pause/resume/title） | 全域跨場景指令 | ✅ |
-| `Scripts/CLI/TitleSceneCLICommands.cs` | TitleScene 指令：`start`、`load`（OnDestroy Unregister） | ✅ |
+| `Scripts/CLI/TitleSceneCLICommands.cs` | TitleScene 指令：`start`（OnDestroy Unregister；`load` 已移至全域） | ✅ |
 | `Scripts/CLI/SceneCommandRegistry.cs` | 場景指令集中管理（抽象層） | ❌ 未建立 |
 | `Scripts/CLI/GlobalCLICommands.cs` | 全域指令獨立檔案 | ❌ 未建立（已整合入 CLICommands.cs） |
 | `Scripts/CLI/MainSceneCLICommands.cs` | MainScene 獨立指令檔案 | ❌ 未建立（已整合入 CLICommands.cs） |
@@ -176,3 +176,6 @@ Assets/Scenes/
 - **DisableDomainReload**：啟用後 static 變數不自動歸零。所有 singleton 已加 `[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]` 重置。對應類別：SceneLoader、GameManager、Inventory、CLISystem、ItemRegistry、CLIUI、PauseMenuUI。
 - **New Input System**：已從 Legacy 遷移（commit `0371a87`）。
 - **UI Prefabs 建立**（2026-06-04）：`InventoryPanel.prefab`、`CLIPanel.prefab`、`PauseMenuPanel.prefab` 已用 `PrefabUtility.SaveAsPrefabAsset` 從場景 GameObject 建立，儲存於 `Assets/Prefabs/UI/`。
+- **MainScene UI Prefab 替換**（2026-06-04）：MainScene Canvas 下三個 standalone UI GameObject（PauseMenuPanel、InventoryPanel、CLIPanel）已替換為 prefab instance（`PrefabUtility.InstantiatePrefab`）。序列化欄位自動連接，Resume 按鈕正常關閉暫停 UI（PlayMode 驗證通過）。
+- **Inventory / ItemRegistry 場景化**（2026-06-04）：移除 `DontDestroyOnLoad`，加入 `OnDestroy` 清除 Instance。物品欄資料不再跨場景保存（僅 MainScene 有效）。
+- **`load` 指令全域化**（2026-06-04）：從 `TitleSceneCLICommands.cs` 移至 `CLICommands.cs`，全場景可用。`TitleSceneCLICommands` 僅保留 `start`。
