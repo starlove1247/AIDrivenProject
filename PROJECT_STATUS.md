@@ -1,6 +1,6 @@
 # AIDrivenProject — Project Status
 
-> Last updated: 2026-06-04 (物品欄完成 + Phase 7 CLI 指令：scene/inventory/pause/resume/title/start/load)  
+> Last updated: 2026-06-04 (建立 InventoryPanel / CLIPanel / PauseMenuPanel Prefab)  
 > Branch: master
 
 ---
@@ -11,9 +11,9 @@
 |-------|-------|--------|
 | 1 | 基礎架構 | ✅ Complete |
 | 2 | 場景管理 | ✅ Complete |
-| 3 | 物品欄系統 | ⚠️ Mostly Complete |
+| 3 | 物品欄系統 | ✅ Complete |
 | 4 | CLI 系統 | ✅ Complete |
-| 5 | 場景 UI | ⚠️ Mostly Complete |
+| 5 | 場景 UI | ✅ Complete |
 | 6 | 整合與測試 | ✅ Complete |
 | 7 | CLI 跨場景指令系統 | ⚠️ Mostly Complete |
 
@@ -44,9 +44,7 @@
 - [x] `ItemRegistry.cs` — `Assets/Scripts/Core/ItemRegistry.cs`
 - [x] ScriptableObject 示範：`Sword.asset`, `Potion.asset`, `Key.asset` — `Assets/ScriptableObjects/Items/`
 - [x] `ItemSlot.prefab` — `Assets/Prefabs/Items/ItemSlot.prefab`
-
-### Pending
-- [ ] `InventoryPanel` Prefab — `Assets/Prefabs/UI/` 資料夾存在但為空，Panel 目前直接建在 MainScene 內
+- [x] `InventoryPanel.prefab` — `Assets/Prefabs/UI/InventoryPanel.prefab`
 
 ---
 
@@ -58,8 +56,7 @@
 - [x] `CLIUI.cs` — `Assets/Scripts/CLI/CLIUI.cs`
 - [x] `TitleSceneCLICommands.cs` — `Assets/Scripts/CLI/TitleSceneCLICommands.cs`（start/load）
 
-### Pending
-- [ ] `CLIPanel` Prefab — Panel 目前直接建在 MainScene 內，尚未獨立為 Prefab
+- [x] `CLIPanel.prefab` — `Assets/Prefabs/UI/CLIPanel.prefab`
 
 ---
 
@@ -72,8 +69,7 @@
 - [x] TitleScene Canvas 設置 — 根據 git commit `8f6667b`（將 CLIUI/InventoryUI 移至 Canvas）推斷已完成
 - [x] MainScene Canvas 設置 — commit `31ff8d2`（MainScene 各 Panel 場景儲存狀態改為 active）確認 Panel 存在
 
-### Pending
-- [ ] `InventoryPanel` / `CLIPanel` / `PauseMenu` 獨立 Prefab（目前嵌入場景，非獨立 Prefab）
+- [x] `PauseMenuPanel.prefab` — `Assets/Prefabs/UI/PauseMenuPanel.prefab`
 
 ---
 
@@ -142,7 +138,9 @@ Assets/Prefabs/Items/
   ItemSlot.prefab        ✅
 
 Assets/Prefabs/UI/
-  (empty — UI panels are scene-embedded, not standalone prefabs)
+  InventoryPanel.prefab  ✅
+  CLIPanel.prefab        ✅
+  PauseMenuPanel.prefab  ✅
 ```
 
 ### ScriptableObjects
@@ -167,6 +165,7 @@ Assets/Scenes/
 - **CLI 輸出顯示**（2026-06-04 修復）：CLIPanel OutputScrollView 的 Viewport Image alpha 原為 0，Mask stencil 不寫入導致所有輸出不可見；Content 缺少 VerticalLayoutGroup 導致 ContentSizeFitter 無法計算高度。已修復：Viewport Image alpha=1、Content 加入 VLG、CLIUI.AppendLine 改用 ForceMeshUpdate + LayoutRebuilder。
 - **ItemRegistry allItems 連結**（2026-06-04 修復）：MainScene.unity 的 ItemRegistry 元件 `allItems` 三筆均為 `fileID: 0`（Inspector 未拖入），已補連結 Sword/Potion/Key SO GUID。
 - **物品欄 CLI 完成**（2026-06-04）：`InventoryUI.Instance` + Show/Hide + 5 個新全域 CLI 指令（scene/inventory/pause/resume/title）+ TitleSceneCLICommands（start/load）。PlayMode 驗證通過，0 Console Error。
+- **itemlist + 物品欄 UI 強化**（2026-06-04）：新增 CLI `itemlist` 指令（列出 ItemRegistry 所有物品）；`ItemSlotUI` 加 `Outline` 黃色選擇高亮；`InventoryUI` DetailPanel 執行期加入圖示 Image；EventTrigger 實現點擊空白關閉細節；CloseDetail 統一關閉邏輯。uloop compile 0 errors。
 - **CLI UX 改善**（2026-06-04）：
   - 禁用水平捲動（ScrollRect `m_Horizontal=0`）
   - 新增 VerticalScrollbar（AutoHideAndExpandViewport，12px，深色背景+灰色 handle）
@@ -176,4 +175,4 @@ Assets/Scenes/
 - **CJK 字體**：`NotoSans-Medium SDF` 為 Latin-only，中文顯示為方塊。已加入 `NotoSansSC-Medium` 作為 fallback（commit `35e6c11`）。
 - **DisableDomainReload**：啟用後 static 變數不自動歸零。所有 singleton 已加 `[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]` 重置。對應類別：SceneLoader、GameManager、Inventory、CLISystem、ItemRegistry、CLIUI、PauseMenuUI。
 - **New Input System**：已從 Legacy 遷移（commit `0371a87`）。
-- **UI Prefabs 缺失**：InventoryPanel / CLIPanel / PauseMenu 尚未獨立為 Prefab，若需跨場景複用需先建立。
+- **UI Prefabs 建立**（2026-06-04）：`InventoryPanel.prefab`、`CLIPanel.prefab`、`PauseMenuPanel.prefab` 已用 `PrefabUtility.SaveAsPrefabAsset` 從場景 GameObject 建立，儲存於 `Assets/Prefabs/UI/`。

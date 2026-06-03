@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemRegistry : MonoBehaviour
@@ -15,6 +16,8 @@ public class ItemRegistry : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
+
+    public IReadOnlyList<Item> AllItems => allItems;
 
     public static Item Find(string id)
     {

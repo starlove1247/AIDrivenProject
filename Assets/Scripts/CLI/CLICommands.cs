@@ -85,5 +85,16 @@ public static class CLICommands
             sl.LoadScene("TitleScene");
             return "Loading TitleScene...";
         });
+
+        cli.RegisterCommand("itemlist", args =>
+        {
+            if (ItemRegistry.Instance == null) return "ItemRegistry not found.";
+            var items = ItemRegistry.Instance.AllItems;
+            if (items.Count == 0) return "No items in registry.";
+            var sb = new StringBuilder("Available items:\n");
+            foreach (var item in items)
+                sb.AppendLine($"  [{item.itemId}] {item.itemName} - {item.description}");
+            return sb.ToString().TrimEnd();
+        });
     }
 }

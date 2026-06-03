@@ -15,4 +15,4 @@ MonoBehaviour:
   itemId: sword
   itemName: "\u9435\u528D"
   description: "\u4E00\u628A\u666E\u901A\u7684\u9435\u528D\uFF0C\u92D2\u5229\u4F46\u4E0D\u7279\u5225\u3002"
-  icon: {fileID: 0}
+  icon: {fileID: 5501449468484321073, guid: 5a73f033849015a418252d254fc341c9, type: 3}

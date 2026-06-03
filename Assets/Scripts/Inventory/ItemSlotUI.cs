@@ -10,6 +10,15 @@ public class ItemSlotUI : MonoBehaviour
 
     Item _item;
     System.Action<Item> _onSelected;
+    Outline _outline;
+
+    void Awake()
+    {
+        _outline = gameObject.AddComponent<Outline>();
+        _outline.effectColor = new Color(1f, 0.85f, 0f);
+        _outline.effectDistance = new Vector2(3, -3);
+        _outline.enabled = false;
+    }
 
     public void Setup(Item item, System.Action<Item> onSelected)
     {
@@ -22,5 +31,10 @@ public class ItemSlotUI : MonoBehaviour
 
         slotButton.onClick.RemoveAllListeners();
         slotButton.onClick.AddListener(() => _onSelected?.Invoke(_item));
+    }
+
+    public void SetSelected(bool selected)
+    {
+        if (_outline != null) _outline.enabled = selected;
     }
 }

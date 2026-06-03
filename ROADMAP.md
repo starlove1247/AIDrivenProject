@@ -1,5 +1,8 @@
 # AIDrivenProject — Roadmap
 
+## 開發規則
+- CLI 指令新增或修改時，**必須同步更新本檔對應場景的指令表**。
+
 ## 目標
 2D Unity 遊戲基礎框架：物品欄、CLI 開發者工具、雙場景流程。
 
@@ -20,28 +23,28 @@
 - [x] `ItemSlotUI.cs` — 單格 UI 元件
 - [x] `InventoryUI.cs` — 物品欄面板（I 鍵切換）
 - [x] `ItemRegistry.cs` — 全域物品查詢（CLI give 使用）
-- [ ] 建立示範 ScriptableObject：Sword、Potion、Key
-- [ ] 建立 ItemSlot Prefab（含 Image + Text + Button）
-- [ ] 建立 InventoryPanel Prefab
+- [x] 建立示範 ScriptableObject：Sword、Potion、Key
+- [x] 建立 ItemSlot Prefab（含 Image + Text + Button）
+- [x] 建立 InventoryPanel Prefab
 
 ## Phase 4 — CLI 系統 ✅
 - [x] `CLISystem.cs` — 指令解析與分派
 - [x] `CLICommands.cs` — 內建指令：help / items / give / drop / clear
 - [x] `CLIUI.cs` — 輸入框 + 捲動輸出（\` 鍵切換）
-- [ ] 建立 CLI Prefab（Panel + InputField + ScrollView）
+- [x] 建立 CLI Prefab（Panel + InputField + ScrollView）
 
 ## Phase 5 — 場景 UI ✅
 - [x] `TitleUI.cs` — Start 按鈕切換至 MainScene
 - [x] `PauseMenuUI.cs` — 繼續 / 回到標題按鈕
-- [ ] TitleScene Canvas 設置（Title Text + Start Button）
-- [ ] MainScene Canvas 設置（InventoryPanel + CLIPanel + PauseMenuPanel）
-- [ ] 在 Build Settings 加入兩個場景
+- [x] TitleScene Canvas 設置（Title Text + Start Button）
+- [x] MainScene Canvas 設置（InventoryPanel + CLIPanel + PauseMenuPanel）
+- [x] 在 Build Settings 加入兩個場景
 
-## Phase 6 — 整合與測試
-- [ ] 在 TitleScene / MainScene 掛入所有必要 GameObject
-- [ ] 驗證：CLI `give sword` → 物品欄顯示 → `drop sword` → 移除
-- [ ] 驗證：Start 按鈕切換場景、ESC 暫停選單、回到標題
-- [ ] uloop compile 無錯誤
+## Phase 6 — 整合與測試 ✅
+- [x] 在 TitleScene / MainScene 掛入所有必要 GameObject
+- [x] 驗證：CLI `give sword` → 物品欄顯示 → `drop sword` → 移除
+- [x] 驗證：Start 按鈕切換場景、ESC 暫停選單、回到標題
+- [x] uloop compile 無錯誤
 
 ---
 
@@ -70,6 +73,7 @@
 | 指令 | 說明 |
 |------|------|
 | `items` | 顯示物品欄內容 |
+| `itemlist` | 列出 ItemRegistry 所有可獲得物品 |
 | `give <id>` | 新增物品 |
 | `drop <id>` | 丟棄物品 |
 | `pause` | 開啟暫停選單 |

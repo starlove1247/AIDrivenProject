@@ -15,4 +15,4 @@ MonoBehaviour:
   itemId: potion
   itemName: "\u56DE\u5FA9\u85E5\u6C34"
   description: "\u559D\u4E0B\u5F8C\u53EF\u6062\u5FA9\u5C11\u91CF\u751F\u547D\u503C\u3002"
-  icon: {fileID: 0}
+  icon: {fileID: 744346686941322852, guid: 6e22ad0a003f9c14486180c32e9f05e2, type: 3}

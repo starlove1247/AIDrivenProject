@@ -87,6 +87,8 @@ cli.RegisterCommand("mycommand", args => {
 });
 ```
 
+> **規則：** 每次新增 / 修改 / 移除 CLI 指令後，必須同步更新 `ROADMAP.md` 對應場景指令表。
+
 ## 新增 Item 方式
 1. 右鍵 Assets/ScriptableObjects/Items → Create → Inventory → Item
 2. 填入 `itemId`（小寫唯一值）、`itemName`、`description`、`icon`
