@@ -96,5 +96,14 @@ public static class CLICommands
                 sb.AppendLine($"  [{item.itemId}] {item.itemName} - {item.description}");
             return sb.ToString().TrimEnd();
         });
+
+        cli.RegisterCommand("load", args =>
+        {
+            if (args.Length == 0) return "Usage: load <sceneName>";
+            var sl = SceneLoader.Instance;
+            if (sl == null) return "SceneLoader not available.";
+            sl.LoadScene(args[0]);
+            return $"Loading {args[0]}...";
+        });
     }
 }

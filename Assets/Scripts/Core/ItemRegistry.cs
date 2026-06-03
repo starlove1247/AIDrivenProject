@@ -14,7 +14,11 @@ public class ItemRegistry : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     public IReadOnlyList<Item> AllItems => allItems;

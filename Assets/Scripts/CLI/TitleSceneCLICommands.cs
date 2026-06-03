@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TitleSceneCLICommands : MonoBehaviour
 {
-    static readonly string[] _names = { "start", "load" };
+    static readonly string[] _names = { "start" };
 
     void Start()
     {
@@ -13,13 +13,6 @@ public class TitleSceneCLICommands : MonoBehaviour
         {
             SceneLoader.Instance?.LoadScene("MainScene");
             return "Loading MainScene...";
-        });
-
-        cli.RegisterCommand("load", args =>
-        {
-            if (args.Length == 0) return "Usage: load <sceneName>";
-            SceneLoader.Instance?.LoadScene(args[0]);
-            return $"Loading {args[0]}...";
         });
     }
 
