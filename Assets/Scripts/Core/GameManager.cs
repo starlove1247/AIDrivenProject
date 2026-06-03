@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (CLIUI.Instance != null && CLIUI.Instance.IsOpen) return;
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
             TogglePause();
     }

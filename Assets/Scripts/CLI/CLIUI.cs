@@ -8,14 +8,21 @@ public class CLIUI : MonoBehaviour
 {
     public static CLIUI Instance { get; private set; }
 
+    public bool IsOpen => panel != null && panel.activeSelf;
+
     [SerializeField] GameObject panel;
     [SerializeField] TMP_InputField inputField;
     [SerializeField] TextMeshProUGUI outputText;
     [SerializeField] ScrollRect scrollRect;
     [SerializeField] Key toggleKey = Key.Backquote;
+    [SerializeField] float scrollViewportFraction = 0.25f;
 
     readonly List<string> _lines = new();
     const int MaxLines = 200;
+
+    readonly List<string> _history = new();
+    const int MaxHistory = 50;
+    int _historyIndex = -1;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatic() => Instance = null;
@@ -32,12 +39,53 @@ public class CLIUI : MonoBehaviour
         CLISystem.Instance.OnOutput += AppendLine;
         panel.SetActive(false);
         inputField.onSubmit.AddListener(OnSubmit);
+        scrollRect.scrollSensitivity = 0f;
     }
 
     void Update()
     {
         if (Keyboard.current != null && Keyboard.current[toggleKey].wasPressedThisFrame)
             TogglePanel();
+
+        if (IsOpen && Keyboard.current != null &&
+            (Keyboard.current[Key.Enter].wasPressedThisFrame ||
+             Keyboard.current[Key.NumpadEnter].wasPressedThisFrame) && !inputField.isFocused)
+        {
+            inputField.ActivateInputField();
+        }
+
+        if (IsOpen && Mouse.current != null)
+        {
+            float scrollY = Mouse.current.scroll.ReadValue().y;
+            if (Mathf.Abs(scrollY) > 0.1f)
+            {
+                float viewportH = scrollRect.viewport.rect.height;
+                float contentH = scrollRect.content.rect.height;
+                float overflow = contentH - viewportH;
+                if (overflow > 0f)
+                {
+                    float normalizedDelta = Mathf.Sign(scrollY) * (viewportH * scrollViewportFraction / overflow);
+                    scrollRect.verticalNormalizedPosition = Mathf.Clamp01(
+                        scrollRect.verticalNormalizedPosition + normalizedDelta);
+                }
+            }
+        }
+
+        if (IsOpen && Keyboard.current != null && Keyboard.current[Key.UpArrow].wasPressedThisFrame)
+        {
+            if (_history.Count == 0 || _historyIndex >= _history.Count - 1)
+            {
+                _historyIndex = -1;
+                inputField.text = string.Empty;
+            }
+            else
+            {
+                _historyIndex++;
+                inputField.text = _history[_history.Count - 1 - _historyIndex];
+                inputField.MoveTextEnd(false);
+            }
+            if (!inputField.isFocused) inputField.ActivateInputField();
+        }
     }
 
     void TogglePanel()
@@ -54,6 +102,9 @@ public class CLIUI : MonoBehaviour
     void OnSubmit(string text)
     {
         if (string.IsNullOrWhiteSpace(text)) return;
+        _history.Add(text);
+        if (_history.Count > MaxHistory) _history.RemoveAt(0);
+        _historyIndex = -1;
         CLISystem.Instance.Execute(text);
         inputField.text = string.Empty;
         inputField.ActivateInputField();
@@ -65,7 +116,8 @@ public class CLIUI : MonoBehaviour
         _lines.Add(line);
         if (_lines.Count > MaxLines) _lines.RemoveAt(0);
         outputText.text = string.Join("\n", _lines);
-        Canvas.ForceUpdateCanvases();
+        outputText.ForceMeshUpdate();
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)outputText.transform.parent);
         scrollRect.verticalNormalizedPosition = 0f;
     }
 

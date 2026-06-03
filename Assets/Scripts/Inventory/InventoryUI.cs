@@ -32,6 +32,7 @@ public class InventoryUI : MonoBehaviour
 
     void Update()
     {
+        if (CLIUI.Instance != null && CLIUI.Instance.IsOpen) return;
         if (Keyboard.current != null && Keyboard.current[toggleKey].wasPressedThisFrame)
             panel.SetActive(!panel.activeSelf);
     }

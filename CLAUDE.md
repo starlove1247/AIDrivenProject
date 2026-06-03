@@ -144,3 +144,36 @@ uloop screenshot                       # 截圖確認 UI
 uloop control-play-mode --action start # 進入 PlayMode
 uloop control-play-mode --action stop  # 停止 PlayMode
 ```
+
+## 偵錯工作流程規則
+
+### 優先靜態分析，延後 PlayMode
+**進入 PlayMode 耗時顯著（Domain Reload、編譯、等待穩定）。**  
+每次 Stop → 再 Play 約需 10–30 秒。應盡量減少 PlayMode 週期數。
+
+**正確流程：**
+1. **先讀場景結構**：用 `uloop get-hierarchy` 或直接讀 `Assets/Scenes/*.unity` YAML，確認 GameObject 組件、RectTransform、Inspector 值。
+2. **先讀相關 Script**：確認邏輯是否有缺漏或 Unity API 誤用（如 Mask 需 Image alpha > 0、ContentSizeFitter 需配合 VerticalLayoutGroup 等）。
+3. **靜態分析找到問題後修改**：編輯 Scene YAML 或 Script。
+4. **最後才進 PlayMode**：僅用於最終驗證，一次解決，不反覆 Stop/Play。
+
+> ⚠️ **禁止**：在尚未確認問題根因前就進入 PlayMode「試試看」。
+> 每次 PlayMode 都應是「已知問題 → 已修改 → 驗證」的最後一步。
+
+### Unity UI 佈局常見陷阱（靜態分析重點）
+| 症狀 | 可能原因 | 靜態確認方法 |
+|------|----------|------------|
+| ScrollView 內容不顯示 | Viewport Image alpha = 0 → Mask 失效 | 查 Scene YAML 對應 Image `m_Color.a` |
+| ContentSizeFitter 不更新 | 缺少 VerticalLayoutGroup | 查 Content 的 components 列表 |
+| 文字不顯示 | Font Asset 未指定 / TMP color alpha = 0 | 查 TextMeshProUGUI `m_Color` / `m_fontAsset` |
+
+## 任務完成規則
+
+### 每次任務完成後必須執行
+1. **更新 `PROJECT_STATUS.md`**：反映本次改動的最新狀態（已完成項目打勾、新增 Known Issues、更新 Last updated 日期）。
+
+### PlayMode 驗證後額外執行
+若本次任務有實際進入 PlayMode 測試並確認功能正常：
+2. **執行 git commit**：將所有改動（含 `PROJECT_STATUS.md`）一併提交，commit message 說明功能驗證結果。
+
+> 判斷標準：「PlayMode 驗證」= 用 `uloop control-play-mode` 進入 Play Mode，實際觸發並確認目標功能行為正確，無 Console 錯誤。
