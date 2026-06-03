@@ -20,7 +20,7 @@ public class PauseMenuUI : MonoBehaviour
     void Start()
     {
         resumeButton.onClick.AddListener(() => GameManager.Instance.Resume());
-        titleButton.onClick.AddListener(() => SceneLoader.Instance.LoadScene("TitleScene"));
+        titleButton.onClick.AddListener(() => SceneLoader.Instance.LoadSceneWithFade("TitleScene"));
         panel.SetActive(false);
     }
 

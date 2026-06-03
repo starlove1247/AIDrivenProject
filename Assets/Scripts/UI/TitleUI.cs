@@ -8,6 +8,6 @@ public class TitleUI : MonoBehaviour
     void Start()
     {
         startButton.onClick.AddListener(() =>
-            SceneLoader.Instance.LoadScene("MainScene"));
+            SceneLoader.Instance.LoadSceneWithFade("MainScene"));
     }
 }

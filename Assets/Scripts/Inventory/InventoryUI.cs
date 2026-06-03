@@ -64,7 +64,7 @@ public class InventoryUI : MonoBehaviour
         var descRT = detailDescription.rectTransform;
         descRT.anchorMin = descRT.anchorMax = new Vector2(0.5f, 1f);
         descRT.pivot = new Vector2(0.5f, 1f);
-        descRT.sizeDelta = new Vector2(300, 90);
+        descRT.sizeDelta = new Vector2(300, 50);
         descRT.anchoredPosition = new Vector2(0, -234f);
 
         // 點擊 panel 空白處關閉細節

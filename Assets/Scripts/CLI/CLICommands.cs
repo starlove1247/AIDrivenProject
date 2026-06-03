@@ -105,5 +105,17 @@ public static class CLICommands
             sl.LoadScene(args[0]);
             return $"Loading {args[0]}...";
         });
+
+        cli.RegisterCommand("fade", args =>
+        {
+            if (args.Length == 0)
+                return $"Scene fade: {(ScreenFader.FadeEnabled ? "on" : "off")}. Usage: fade <on|off>";
+            switch (args[0].ToLower())
+            {
+                case "on":  ScreenFader.FadeEnabled = true;  return "Scene fade: on";
+                case "off": ScreenFader.FadeEnabled = false; return "Scene fade: off";
+                default: return "Usage: fade <on|off>";
+            }
+        });
     }
 }

@@ -1,6 +1,6 @@
 # AIDrivenProject — Project Status
 
-> Last updated: 2026-06-04 (help 指令依場景過濾：TitleScene 只顯示通用指令，MainScene 顯示全部指令)  
+> Last updated: 2026-06-04 (ScreenFader 獨立為通用型 singleton GO，SceneLoader.Awake() 建立；sortingOrder=32767，含 GraphicRaycaster)  
 > Branch: master
 
 ---
@@ -102,7 +102,7 @@ PlayMode 驗證完成（2026-06-04）：
 | `Scripts/CLI/CLIBootstrap.cs` | `BeforeSceneLoad` 靜態建立 CLIRoot | ✅ 新增 |
 | `Scripts/CLI/TitleSceneCLICommands.cs` | TitleScene 指令：`start`（OnDestroy Unregister） | ✅ |
 | `Resources/CLIRoot.prefab` | Canvas(100)+CLISystem+CLIUI+SceneLoader+CLIPanel | ✅ 新增 |
-| `Scripts/Core/SceneTransition.cs` | 淡入淡出效果（CanvasGroup alpha tween） | ❌ 未實作 |
+| `Scripts/Core/ScreenFader.cs` | 獨立 singleton GO，FadeOverlay Canvas(sortingOrder=32767)，GraphicRaycaster | ✅ 新增 |
 
 ---
 
@@ -185,3 +185,4 @@ Assets/Scenes/
 - **CLI 跨場景 Bootstrap**（2026-06-04）：`CLIBootstrap.cs`（`BeforeSceneLoad`）自動建立 `CLIRoot.prefab`（Canvas sortingOrder=100 + CLISystem + CLIUI + SceneLoader + CLIPanel），存於 `Assets/Resources/`。無論從 TitleScene 或 MainScene 啟動皆可用。移除 MainScene 的 CLISystem 獨立 GO 與 Canvas 上的 CLIUI/CLIPanel。PlayMode 驗證：CLIRoot 在 DontDestroyOnLoad，`give sword` / `start` 指令正常。0 Console Errors。
 - **TitleScene 背景修復**（2026-06-04）：Canvas Background Image 顏色由黑改為深藍灰（0.25, 0.28, 0.38, 1），CLI 面板（深色）現在有足夠對比度可見。
 - **help 指令場景過濾**（2026-06-04）：`CLISystem.RegisterCommand` 加第三參數 `scene`（`null`=通用），`GetCommandNames(currentScene)` 依場景過濾。`help` 顯示當前場景可用指令。通用：help/clear/scene/load；MainScene 專屬：items/give/drop/inventory/pause/resume/title/itemlist。uloop compile 0 errors。
+- **場景切換淡入淡出**（2026-06-04）：新增 `ScreenFader.cs` 獨立通用型 singleton，`SceneLoader.Awake()` 建立其 GO + `DontDestroyOnLoad`。FadeOverlay Canvas sortingOrder=32767（`short.MaxValue`），含 GraphicRaycaster 攔截 UI 事件。`SceneLoader.LoadSceneWithFade()` 透過 `ScreenFader.Instance.FadeOut/FadeIn()` 執行協程。按鈕（TitleUI / PauseMenuUI）用 `LoadSceneWithFade`；CLI `title`/`load` 用 `LoadScene`（直接切換）。`fade <on|off>` 指令改存取 `ScreenFader.FadeEnabled`。uloop compile 0 errors。
