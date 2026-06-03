@@ -1,3 +1,6 @@
+# uloop outputs (截圖、hierarchy dump 等暫存產物)
+.uloop/outputs/
+
 # Unity generated
 [Ll]ibrary/
 [Tt]emp/

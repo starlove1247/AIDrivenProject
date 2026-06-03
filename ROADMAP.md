@@ -45,6 +45,51 @@
 
 ---
 
+## Phase 7 — CLI 跨場景指令系統
+
+### 設計原則
+- CLI 本體（`CLISystem` / `CLIUI`）為 `DontDestroyOnLoad` 單例，跨場景保持存在
+- 指令分為兩類：**全域指令**（所有場景可用）、**場景指令**（僅特定場景註冊）
+- 場景載入完成後由該場景的 bootstrap GameObject 呼叫 `RegisterSceneCommands()`；場景卸載時呼叫 `UnregisterSceneCommands()` 清除場景指令
+
+### 全域指令（任何場景皆可用）
+| 指令 | 說明 |
+|------|------|
+| `help` | 列出當前場景所有可用指令 |
+| `clear` | 清除 CLI 輸出 |
+| `scene` | 顯示目前場景名稱 |
+| `fade <on\|off>` | 開關場景切換淡入淡出效果（預設 on） |
+
+### TitleScene 指令
+| 指令 | 說明 |
+|------|------|
+| `start` | 進入 MainScene（等同 Start 按鈕） |
+| `load <sceneName>` | 直接載入指定場景（開發用） |
+
+### MainScene 指令
+| 指令 | 說明 |
+|------|------|
+| `items` | 顯示物品欄內容 |
+| `give <id>` | 新增物品 |
+| `drop <id>` | 丟棄物品 |
+| `pause` | 開啟暫停選單 |
+| `resume` | 關閉暫停選單 |
+| `inventory <show\|hide>` | 強制顯示 / 隱藏物品欄面板 |
+| `title` | 回到 TitleScene |
+
+### 實作項目
+- [ ] `SceneCommandRegistry.cs` — 管理場景指令的註冊 / 取消，`CLISystem` 查詢時合併全域與場景指令
+- [ ] `GlobalCLICommands.cs` — 全域指令：`help`、`clear`、`scene`、`fade`
+- [ ] `TitleSceneCLICommands.cs` — TitleScene 場景指令：`start`、`load`
+- [ ] `MainSceneCLICommands.cs` — MainScene 場景指令：物品欄、暫停、`title`
+- [ ] `SceneTransition.cs` — 淡入淡出效果（CanvasGroup alpha tween），`fade` 指令控制開關
+- [ ] TitleScene / MainScene bootstrap GameObject 於 `Start()` 呼叫 `RegisterSceneCommands()`
+- [ ] 驗證：TitleScene 輸入 `start` 切換至 MainScene，切換時依 fade 設定執行淡入淡出
+- [ ] 驗證：MainScene 輸入 `give sword` → 物品欄顯示；`pause` → 暫停選單開啟
+- [ ] 驗證：`help` 輸出隨場景不同而顯示對應指令清單
+
+---
+
 ## 未來擴充（Backlog）
 - [ ] 物品圖示系統（Sprite Atlas）
 - [ ] 物品欄容量上限
@@ -52,4 +97,3 @@
 - [ ] 物品使用效果（`use <id>` CLI 指令）
 - [ ] 更多場景（遊戲關卡）
 - [ ] 音效系統
-- [ ] 動畫過場（場景切換淡入淡出）
